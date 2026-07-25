@@ -24,7 +24,7 @@ MODEL_REGISTRY: dict = {
         "modality":    "X-Ray",
         "architecture":"densenet121",
         "img_size":    224,
-        "model_file":  "model.pt",
+        "model_file":  "chest_xray_model.pt",
         "validation": {
             "require_grayscale":   True,
             "max_mean_brightness": 185,

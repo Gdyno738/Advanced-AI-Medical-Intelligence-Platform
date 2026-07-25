@@ -24,7 +24,7 @@ def create_test_checkpoint(output_path: str | None = None) -> Path:
     """Create a DenseNet121 checkpoint with random weights.
 
     Args:
-        output_path: Where to save the checkpoint. Defaults to models/model.pt.
+        output_path: Where to save the checkpoint. Defaults to models/chest_xray_model.pt.
 
     Returns:
         Path to the saved checkpoint file.

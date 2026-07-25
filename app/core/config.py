@@ -21,7 +21,7 @@ load_dotenv(BASE_DIR / ".env", override=False)
 # ---------------------------------------------------------------------------
 
 MODEL_DIR  = BASE_DIR / "models"
-MODEL_PATH = MODEL_DIR / "model.pt"
+MODEL_PATH = MODEL_DIR / "chest_xray_model.pt"
 
 REPORTS_DIR = BASE_DIR / "reports"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)

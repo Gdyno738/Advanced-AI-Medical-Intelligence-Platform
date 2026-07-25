@@ -47,7 +47,7 @@ graph LR
 ### Prerequisites
 
 - Python 3.11+ and Node.js 18+
-- Your trained `model.pt` placed in `models/` directory
+- Your trained `chest_xray_model.pt` placed in `models/` directory
 
 ### Local Development
 
@@ -60,7 +60,7 @@ venv\Scripts\activate        # Windows
 # 2. Install Python dependencies
 pip install -r requirements.txt
 
-# 3. (Optional) Generate test model if you don't have model.pt yet
+# 3. (Optional) Generate test model if you don't have chest_xray_model.pt yet
 python tests/create_test_model.py
 
 # 4. (Optional) Set xAI API key for LLM reports
@@ -194,7 +194,7 @@ medical-ai-platform/
 │   ├── vite.config.js
 │   └── package.json
 ├── models/
-│   └── model.pt             # Trained DenseNet121 checkpoint
+│   └── chest_xray_model.pt  # Trained DenseNet121 checkpoint
 ├── reports/                  # Generated heatmaps
 ├── tests/
 │   ├── create_test_model.py
@@ -213,15 +213,11 @@ medical-ai-platform/
 ## Testing
 
 ```bash
-# Generate test model (if models/model.pt doesn't exist)
+# Generate test model (if models/chest_xray_model.pt doesn't exist)
 python tests/create_test_model.py
 
 # Run all tests
 python -m pytest tests/ -v
 ```
 
----
 
-## Disclaimer
-
-This is an AI-powered tool for **educational purposes only** and is not intended as a medical diagnostic tool. Always consult a licensed physician for health concerns.

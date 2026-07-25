@@ -13,11 +13,6 @@ Supports all three active analysis modules:
 import os
 from app.core.config import XAI_API_KEY, XAI_BASE_URL, GROK_MODEL
 
-DISCLAIMER = (
-    "⚠️ This is an AI-generated analysis for educational and research purposes only. "
-    "It is NOT a medical diagnosis. Please consult a licensed physician for any health concerns."
-)
-
 # ---------------------------------------------------------------------------
 # Per-module prompt templates
 # ---------------------------------------------------------------------------
@@ -94,8 +89,7 @@ def _generate_grok_report(predicted_class: str, confidence: float, model_id: str
         f"1-2 sentences on how to interpret the attention heatmap.\n"
         f"### Recommendation\n"
         f"Appropriate next steps based on the finding.\n\n"
-        f"End with this exact disclaimer on a new line:\n"
-        f"*{DISCLAIMER}*\n\n"
+
         f"Keep tone professional, concise, and accessible to both clinicians and patients."
     )
 
@@ -110,8 +104,7 @@ def _generate_grok_report(predicted_class: str, confidence: float, model_id: str
     )
 
     report = response.choices[0].message.content.strip()
-    if DISCLAIMER not in report:
-        report += f"\n\n---\n\n*{DISCLAIMER}*"
+
     return report
 
 
@@ -147,9 +140,7 @@ def _generate_template_report(predicted_class: str, confidence: float, model_id:
         f"in the AI model's decision. Areas with warm colours (red/yellow) "
         f"indicate the regions the model weighted most heavily.\n\n"
         f"### Recommendation\n\n"
-        f"{rec}\n\n"
-        f"---\n\n"
-        f"*{DISCLAIMER}*"
+        f"{rec}\n"
     )
 
 

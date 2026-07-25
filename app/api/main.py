@@ -260,11 +260,20 @@ def create_prediction(
     db.commit()
     db.refresh(db_prediction)
 
-    # Deserialize probabilities before returning
-    response_data = PredictionResponse.model_validate(db_prediction)
-    if db_prediction.probabilities:
-        response_data.probabilities = json.loads(db_prediction.probabilities)
-    return response_data
+    # Construct response manually to avoid Pydantic failing on JSON string
+    probs_dict = json.loads(db_prediction.probabilities) if db_prediction.probabilities else None
+    return PredictionResponse(
+        id=db_prediction.id,
+        image_filename=db_prediction.image_filename,
+        predicted_class=db_prediction.predicted_class,
+        confidence=db_prediction.confidence,
+        probabilities=probs_dict,
+        report_text=db_prediction.report_text,
+        heatmap_path=db_prediction.heatmap_path,
+        warning=db_prediction.warning,
+        model_id=db_prediction.model_id,
+        created_at=db_prediction.created_at,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -306,7 +315,16 @@ def get_prediction(prediction_id: int, db: Session = Depends(get_db)):
     if prediction is None:
         raise HTTPException(status_code=404, detail="Prediction not found")
 
-    detail = PredictionDetail.model_validate(prediction)
-    if prediction.probabilities:
-        detail.probabilities = json.loads(prediction.probabilities)
-    return detail
+    probs_dict = json.loads(prediction.probabilities) if prediction.probabilities else None
+    return PredictionDetail(
+        id=prediction.id,
+        image_filename=prediction.image_filename,
+        predicted_class=prediction.predicted_class,
+        confidence=prediction.confidence,
+        probabilities=probs_dict,
+        report_text=prediction.report_text,
+        heatmap_path=prediction.heatmap_path,
+        warning=prediction.warning,
+        model_id=prediction.model_id,
+        created_at=prediction.created_at,
+    )

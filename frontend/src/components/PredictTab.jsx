@@ -31,7 +31,7 @@ function ProbBars({ probabilities }) {
   );
 }
 
-export default function PredictTab({ apiOnline, modelId }) {
+export default function PredictTab({ apiOnline, modelId, onModelChange }) {
   const [file,      setFile]      = useState(null);
   const [preview,   setPreview]   = useState(null);
   const [loading,   setLoading]   = useState(false);
@@ -82,21 +82,50 @@ export default function PredictTab({ apiOnline, modelId }) {
   const cls = result?.predicted_class?.toLowerCase() ?? 'default';
 
   return (
-    <div className="predict-grid">
+    <div className="predict-tab-container">
+      {/* Hero Image */}
+      <div className="hero-banner" style={{ marginTop: '1rem', marginBottom: '2.5rem', borderRadius: 'var(--r-lg)', overflow: 'hidden', height: '180px', border: '1px solid var(--border)' }}>
+        <img src="/hero_banner.png" alt="AI Medical Analysis" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      </div>
 
-      {/* ── Upload Panel ── */}
-      <div className="card">
-        <div className="card-header">
-          <div className="card-header-icon">📤</div>
-          <span className="card-title">
-            Upload {MODULE_LABELS[modelId]?.title ?? 'Medical'} Image
-          </span>
-          {MODULE_LABELS[modelId]?.hint && (
-            <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              {MODULE_LABELS[modelId].hint}
-            </span>
-          )}
-        </div>
+      <div className="predict-grid">
+        {/* ── Upload Panel ── */}
+        <div className="card">
+          <div className="card-header" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="card-header-icon">📤</div>
+              <span className="card-title">Upload Image for Analysis</span>
+            </div>
+            
+            <div style={{ width: '100%' }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Select Scan Type
+              </label>
+              <select 
+                value={modelId} 
+                onChange={(e) => {
+                  onModelChange(e.target.value);
+                  reset();
+                }}
+                style={{
+                  width: '100%',
+                  padding: '0.65rem 0.8rem',
+                  borderRadius: 'var(--r-md)',
+                  border: '1px solid var(--border)',
+                  background: 'var(--bg-surface)',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'inherit',
+                  fontSize: '0.9rem',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="chest_xray_pneumonia">Chest X-Ray (Lungs)</option>
+                <option value="brain_tumor">Brain MRI (Tumor)</option>
+                <option value="skin_cancer">Skin Dermoscopy (Cancer)</option>
+              </select>
+            </div>
+          </div>
         <div className="card-body">
           {!preview ? (
             <div
@@ -230,6 +259,7 @@ export default function PredictTab({ apiOnline, modelId }) {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }

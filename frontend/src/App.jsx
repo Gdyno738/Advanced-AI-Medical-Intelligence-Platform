@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { checkHealth } from './api';
 import Header    from './components/Header';
-import ModuleBar from './components/ModuleBar';
+
 import TabNav    from './components/TabNav';
 import PredictTab from './components/PredictTab';
 import HistoryTab from './components/HistoryTab';
@@ -31,8 +31,7 @@ export default function App() {
 
   return (
     <div className="app-wrap">
-      <Header    apiOnline={apiOnline} selectedModel={selectedModel} />
-      <ModuleBar selectedId={selectedModel} onSelect={setSelectedModel} />
+      <Header apiOnline={apiOnline} />
 
       <main className="page-body">
         <div className="app-container">
@@ -41,6 +40,7 @@ export default function App() {
             <PredictTab
               apiOnline={apiOnline}
               modelId={selectedModel}
+              onModelChange={setSelectedModel}
             />
           )}
           {activeTab === 'history' && <HistoryTab />}
@@ -48,7 +48,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        Advanced AI Medical Intelligence Platform · For research and educational purposes only
+        Advanced AI Medical Intelligence Platform
       </footer>
     </div>
   );
