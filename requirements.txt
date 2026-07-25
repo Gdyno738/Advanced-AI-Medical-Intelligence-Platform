@@ -1,0 +1,27 @@
+# Advanced AI Medical Intelligence Platform — Pinned Dependencies
+
+# --- Core ML / Deep Learning ---
+torch==2.13.0
+torchvision==0.28.0
+grad-cam==1.5.4
+Pillow==12.3.0
+numpy==2.5.1
+opencv-python-headless==5.0.0.93
+
+# --- Web Framework (FastAPI + ASGI Server) ---
+fastapi[standard]==0.139.2
+uvicorn==0.51.0
+python-multipart==0.0.32
+
+# --- Database (SQLAlchemy ORM + SQLite) ---
+sqlalchemy==2.0.51
+
+# --- Configuration ---
+python-dotenv>=1.0.0
+
+# --- LLM Integration (OpenAI-compatible client for xAI Grok) ---
+openai==2.48.0
+
+# --- Testing ---
+pytest==9.1.1
+httpx==0.28.1

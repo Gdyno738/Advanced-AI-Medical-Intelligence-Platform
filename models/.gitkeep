@@ -1,0 +1,2 @@
+# Place your trained model.pt checkpoint here.
+# Expected format: dict with keys model_state_dict, class_names, architecture, img_size

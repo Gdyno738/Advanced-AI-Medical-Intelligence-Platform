@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  # ---- FastAPI Backend ----
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    container_name: medical-ai-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - shared-reports:/app/reports
+      - db-data:/app/app/db
+      - ./models:/app/models:ro
+    environment:
+      - XAI_API_KEY=${XAI_API_KEY:-}
+      - GROK_MODEL=${GROK_MODEL:-grok-3-mini}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ---- React Frontend (Nginx) ----
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
+    container_name: medical-ai-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  shared-reports:
+    driver: local
+  db-data:
+    driver: local
