@@ -30,8 +30,9 @@ RUN mkdir -p reports uploads app/db
 # Copy built React frontend into the static directory
 COPY --from=frontend-build /app/dist /app/static
 
-# Expose port 7860 (Hugging Face Default)
-EXPOSE 7860
+# Expose port (default 7860 for HF Spaces, but PaaS can override)
+ENV PORT=7860
+EXPOSE ${PORT}
 
 # Command to run FastAPI
-CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT}
