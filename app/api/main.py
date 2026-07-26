@@ -21,6 +21,7 @@ from typing import List
 from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.core.config import REPORTS_DIR, UPLOAD_DIR
@@ -328,3 +329,24 @@ def get_prediction(prediction_id: int, db: Session = Depends(get_db)):
         model_id=prediction.model_id,
         created_at=prediction.created_at,
     )
+
+
+# ---------------------------------------------------------------------------
+# Frontend Serving (Hugging Face Spaces / Single Container)
+# ---------------------------------------------------------------------------
+
+FRONTEND_DIST = Path("/app/static")
+
+if FRONTEND_DIST.exists():
+    # Mount frontend assets
+    assets_dir = FRONTEND_DIST / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="frontend_assets")
+
+    # Catch-all route to serve static files or fallback to index.html for SPA routing
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        path = FRONTEND_DIST / full_path
+        if path.is_file():
+            return FileResponse(path)
+        return FileResponse(FRONTEND_DIST / "index.html")

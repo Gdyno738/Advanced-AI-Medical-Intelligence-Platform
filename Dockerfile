@@ -1,5 +1,14 @@
-# ---- Backend Image ----
-FROM python:3.11-slim AS backend
+# ---- Frontend Build Stage ----
+FROM node:20-alpine AS frontend-build
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+ENV VITE_API_BASE_URL=""
+RUN npm run build
+
+# ---- Backend & Unified App Stage ----
+FROM python:3.11-slim
 
 # System dependencies for OpenCV headless
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,27 +29,11 @@ COPY models/ ./models/
 # Create necessary directories
 RUN mkdir -p reports uploads app/db
 
-EXPOSE 8000
+# Copy built React frontend into the static directory
+COPY --from=frontend-build /app/dist /app/static
 
-CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expose port 7860 (Hugging Face Default)
+EXPOSE 7860
 
-
-# ---- Frontend Image ----
-FROM node:20-alpine AS frontend-build
-
-WORKDIR /app
-COPY frontend/package*.json ./
-RUN npm ci
-COPY frontend/ ./
-RUN npm run build
-
-
-FROM nginx:alpine AS frontend
-
-# Copy the built React app
-COPY --from=frontend-build /app/dist /usr/share/nginx/html
-
-# Custom nginx config for SPA + API proxy
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
+# Command to run FastAPI
+CMD ["uvicorn", "app.api.main:app", "--host", "0.0.0.0", "--port", "7860"]
