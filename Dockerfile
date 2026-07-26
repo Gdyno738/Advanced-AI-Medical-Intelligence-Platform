@@ -8,16 +8,17 @@ ENV VITE_API_BASE_URL=""
 RUN npm run build
 
 # ---- Backend & Unified App Stage ----
-FROM python:3.12
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install OpenGL required by some OpenCV builds
-RUN apt-get update && apt-get install -y --no-install-recommends libgl1 && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies and force removal of GUI OpenCV
+# Install Python dependencies
+# DevOps Fix: Libraries like grad-cam secretly install the GUI 'opencv-python'.
+# We uninstall all cv2 packages and forcefully reinstall the headless version to avoid missing C-libraries.
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt && pip uninstall -y opencv-python
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip uninstall -y opencv-python opencv-python-headless && \
+    pip install --no-cache-dir opencv-python-headless==5.0.0.93
 
 # Copy application code
 COPY app/ ./app/
