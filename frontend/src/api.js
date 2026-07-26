@@ -3,7 +3,9 @@
  * Base URL is configurable via VITE_API_BASE_URL (defaults to localhost:8000).
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE = typeof import.meta.env.VITE_API_BASE_URL === 'string'
+  ? import.meta.env.VITE_API_BASE_URL
+  : 'http://localhost:8000';
 
 /** Check if the backend API is reachable. Returns full health payload or false. */
 export async function checkHealth() {
