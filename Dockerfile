@@ -8,7 +8,7 @@ ENV VITE_API_BASE_URL=""
 RUN npm run build
 
 # ---- Backend & Unified App Stage ----
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
