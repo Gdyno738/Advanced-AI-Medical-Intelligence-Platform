@@ -12,9 +12,12 @@ FROM python:3.12
 
 WORKDIR /app
 
-# Install Python dependencies
+# Install OpenGL required by some OpenCV builds
+RUN apt-get update && apt-get install -y --no-install-recommends libgl1 && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies and force removal of GUI OpenCV
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip uninstall -y opencv-python
 
 # Copy application code
 COPY app/ ./app/
