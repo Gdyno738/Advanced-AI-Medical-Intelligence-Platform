@@ -12,6 +12,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# DevOps Memory Optimization: Pre-install CPU-only PyTorch to save ~2GB of RAM/Disk on free tiers
+RUN pip install --no-cache-dir torch==2.13.0 torchvision==0.28.0 --index-url https://download.pytorch.org/whl/cpu
+
 # Install Python dependencies
 # DevOps Fix: Libraries like grad-cam secretly install the GUI 'opencv-python'.
 # We uninstall all cv2 packages and forcefully reinstall the headless version to avoid missing C-libraries.
@@ -35,4 +38,4 @@ ENV PORT=7860
 EXPOSE ${PORT}
 
 # Command to run FastAPI
-CMD uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT}
+CMD ["sh", "-c", "uvicorn app.api.main:app --host 0.0.0.0 --port ${PORT:-7860}"]

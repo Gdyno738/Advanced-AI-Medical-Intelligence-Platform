@@ -12,9 +12,13 @@ Supported architectures:
   vgg16         — VGG-16 (generic)
 """
 
+import os
 import torch
 import torch.nn.functional as F
 from torchvision import models, transforms
+
+# DevOps Memory Optimization: Limit threads to prevent OOM kills on PaaS Free Tiers
+torch.set_num_threads(2)
 from PIL import Image
 from pathlib import Path
 from typing import Optional
