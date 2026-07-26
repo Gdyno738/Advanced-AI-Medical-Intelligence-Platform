@@ -95,4 +95,9 @@ def generate_heatmap(image_path: str, model_id: str = None) -> str:
     output_path = REPORTS_DIR / filename
     cv2.imwrite(str(output_path), cv2.cvtColor(cam_image, cv2.COLOR_RGB2BGR))
 
+    # DevOps: Clean up extreme gradient memory used by Grad-CAM
+    import gc
+    del input_tensor, rgb_img, grayscale_cam, cam_image, cam
+    gc.collect()
+
     return str(output_path)

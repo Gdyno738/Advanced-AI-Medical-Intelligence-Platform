@@ -25,10 +25,13 @@ from typing import Optional
 
 from app.core.config import MODEL_DIR, IMAGENET_MEAN, IMAGENET_STD
 
+import gc
+
 _device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Cache: model_id -> (model, class_names)
 _model_cache: dict = {}
+_MAX_CACHED_MODELS = 1
 
 
 # ---------------------------------------------------------------------------
@@ -112,6 +115,11 @@ def _load(model_id: str, model_file: str, architecture: str) -> tuple:
 def get_model(model_id: str, model_file: str, architecture: str):
     """Return (model, class_names, img_size) — loads on first call, cached after."""
     if model_id not in _model_cache:
+        # DevOps: Aggressively evict old models to prevent OOM on 512MB RAM limits
+        if len(_model_cache) >= _MAX_CACHED_MODELS:
+            _model_cache.clear()
+            gc.collect()
+            
         _model_cache[model_id] = _load(model_id, model_file, architecture)
     return _model_cache[model_id]
 
@@ -170,6 +178,10 @@ def predict(image_path: str, model_id: Optional[str] = None) -> dict:
         class_names[i]: round(float(probs[i].item()), 4)
         for i in range(len(class_names))
     }
+
+    # DevOps: Aggressively clean up tensors
+    del input_tensor
+    gc.collect()
 
     return {
         "predicted_class": class_names[predicted_idx],
